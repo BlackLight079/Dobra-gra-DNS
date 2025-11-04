@@ -10,7 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float fightingMovementSpeed;
     [SerializeField] float fightingJumpSpeed;
     float speedX, speedY, jump;
-    bool canJump, fightingStance;
+    bool canJump, fightingStance, leftFloor;
+    int airTimer = 0;
 
     void Start()
     {
@@ -18,11 +19,16 @@ public class PlayerMovement : MonoBehaviour
         col = GetComponent<Collider2D>();
 
         fightingStance = false;
+        leftFloor = false;
     }
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire3")) fightingStance = !fightingStance;
+        if (Input.GetButtonDown("Fire3"))
+        {
+            fightingStance = !fightingStance;
+            if (fightingStance) rb.linearVelocityY = 0;
+        }
 
         if (fightingStance)
         {
@@ -37,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
             jump = Input.GetAxis("Jump") * jumpSpeed;
         }
 
-        rb.linearVelocity = new Vector2(speedX, rb.linearVelocity.y);
+        rb.linearVelocityX = speedX;
         
         if (Input.GetButtonDown("Jump") && canJump)
         {
@@ -46,12 +52,30 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (leftFloor) airTimer++;
+        if (airTimer > 5) canJump = false;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         switch (collision.collider.tag)
         {
             case "Floor":
                 canJump = true;
+                leftFloor = false;
+                airTimer = 0;
+                break;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        switch (collision.collider.tag)
+        {
+            case "Floor":
+                leftFloor = true;
                 break;
         }
     }
