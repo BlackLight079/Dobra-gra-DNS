@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D rb;
-    Collider2D col;
 
     [SerializeField] float movementSpeed;
     [SerializeField] float jumpSpeed;
@@ -13,10 +12,12 @@ public class PlayerMovement : MonoBehaviour
     bool canJump, fightingStance, leftFloor, airStop;
     int jumpTimer, airStopTimer;
 
+    int jumpTimerLimit = 2;
+    int airStopTimerLimit = 12;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
 
         fightingStance = false;
         leftFloor = false;
@@ -68,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         if (leftFloor)
         {
             jumpTimer++;
-            if (jumpTimer > 5)
+            if (jumpTimer > jumpTimerLimit)
             {
                 canJump = false;
                 leftFloor = false;
@@ -78,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         if (airStop)
         {
             airStopTimer++;
-            if (airStopTimer > 12) airStop = false;
+            if (airStopTimer > airStopTimerLimit) airStop = false;
         }
     }
 
