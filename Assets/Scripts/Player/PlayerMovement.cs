@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     bool canJump, fightingStance, leftFloor, airStop;
     int jumpTimer, airStopTimer;
 
-    int jumpTimerLimit = 2;
+    int jumpTimerLimit = 3;
     int airStopTimerLimit = 12;
 
     void Start()
@@ -83,9 +83,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        switch (collision.collider.tag)
+        switch (collision.tag)
         {
             case "Floor":
                 canJump = true;
@@ -95,9 +95,21 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        switch (collision.collider.tag)
+        switch (collision.tag)
+        {
+            case "Floor":
+                canJump = true;
+                leftFloor = false;
+                jumpTimer = 0;
+                break;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        switch (collision.tag)
         {
             case "Floor":
                 leftFloor = true;
