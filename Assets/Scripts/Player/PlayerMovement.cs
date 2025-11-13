@@ -5,16 +5,19 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
 
+    [SerializeField] GameObject attackHitbox;
+
     [SerializeField] float movementSpeed;
     [SerializeField] float jumpSpeed;
     [SerializeField] float fightingMovementSpeed;
     [SerializeField] float fightingJumpSpeed;
     float speedX, speedY, jump;
     bool canJump, fightingStance, leftFloor, airStop, canAirStop;
-    int jumpTimer, airStopTimer;
+    int jumpTimer, airStopTimer, attackTimer;
 
     int jumpTimerLimit = 3;
     int airStopTimerLimit = 12;
+    int attackTimerLimit = 10;
 
     void Start()
     {
@@ -31,6 +34,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetButtonDown("Fire1") && fightingStance)
+        {
+            attackHitbox.SetActive(true);
+            attackTimer = 0;
+        }
+
+
+
         if (Input.GetButtonDown("Fire3"))
         {
             fightingStance = !fightingStance;
@@ -85,6 +96,12 @@ public class PlayerMovement : MonoBehaviour
         {
             airStopTimer++;
             if (airStopTimer > airStopTimerLimit) airStop = false;
+        }
+
+        if (attackTimer < attackTimerLimit)
+        {
+            attackTimer++;
+            if (attackTimer == attackTimerLimit) attackHitbox.SetActive(false);
         }
     }
 
