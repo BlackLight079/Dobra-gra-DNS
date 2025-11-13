@@ -121,6 +121,9 @@ public class PlayerMovement : MonoBehaviour
                 jumpTimer = 0;
                 canAirStop = true;
                 break;
+            case "ChangeSceneTrigger":
+                collision.GetComponent<ChangeSceneTrigger>().ChangeScene();
+                break;
         }
     }
 
