@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float fightingMovementSpeed;
     [SerializeField] float fightingJumpSpeed;
     float speedX, speedY, jump;
-    bool canJump, fightingStance, leftFloor, airStop;
+    bool canJump, fightingStance, leftFloor, airStop, canAirStop;
     int jumpTimer, airStopTimer;
 
     int jumpTimerLimit = 3;
@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
         fightingStance = false;
         leftFloor = false;
+        canAirStop = true;
 
         jumpTimer = 0;
         airStopTimer = 0;
@@ -34,8 +35,9 @@ public class PlayerMovement : MonoBehaviour
         {
             fightingStance = !fightingStance;
             animator.SetTrigger("Draw Weapon");
-            if (fightingStance)
+            if (fightingStance && canAirStop)
             {
+                canAirStop = false;
                 airStop = true;
                 airStopTimer = 0;
             }
@@ -94,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
                 canJump = true;
                 leftFloor = false;
                 jumpTimer = 0;
+                canAirStop = true;
                 break;
         }
     }
