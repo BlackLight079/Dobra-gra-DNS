@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Floor
+  - Attack Hitbox
   layers:
   - Default
   - TransparentFX
