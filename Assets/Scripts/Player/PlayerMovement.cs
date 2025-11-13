@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -40,6 +41,11 @@ public class PlayerMovement : MonoBehaviour
             attackTimer = 0;
         }
 
+        if (attackTimer == attackTimerLimit)
+        {
+            if (speedX > 0) attackHitbox.transform.localPosition = new Vector2(1, 0);
+            if (speedX < 0) attackHitbox.transform.localPosition = new Vector2(-1, 0);
+        }
 
 
         if (Input.GetButtonDown("Fire3"))
