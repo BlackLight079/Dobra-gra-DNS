@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class ChangeSceneTrigger : MonoBehaviour
 {
-    [SerializeField] string scenePath;
+    // Name of Scene inside of "Scenes" folder
+    [SerializeField] string scene;
 
     public void ChangeScene()
     {
-        SceneManager.LoadScene(scenePath);
+        scene = "Scenes/" + scene;
+        SceneManager.LoadScene(scene);
     }
 }
