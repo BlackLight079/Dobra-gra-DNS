@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D rb;
+    Animator animator;
 
     [SerializeField] float movementSpeed;
     [SerializeField] float jumpSpeed;
@@ -18,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
 
         fightingStance = false;
         leftFloor = false;
@@ -31,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Fire3"))
         {
             fightingStance = !fightingStance;
+            animator.SetTrigger("Draw Weapon");
             if (fightingStance)
             {
                 airStop = true;
