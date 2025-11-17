@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 5, z: 10}
-  m_LocalScale: {x: 20, y: 3.5, z: 1}
+  m_LocalScale: {x: 20, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4437657219458403170}
@@ -101,7 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5d3c1caabcee445872aa3c39bac0cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Camera: {fileID: 8534580233246412906}
   direction: 3
 --- !u!61 &4896626097995541667
 BoxCollider2D:
@@ -178,7 +177,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -5, z: 10}
-  m_LocalScale: {x: 20, y: 3.5, z: 1}
+  m_LocalScale: {x: 20, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4437657219458403170}
@@ -250,7 +249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5d3c1caabcee445872aa3c39bac0cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Camera: {fileID: 8534580233246412906}
   direction: 4
 --- !u!61 &2990410174484149110
 BoxCollider2D:
