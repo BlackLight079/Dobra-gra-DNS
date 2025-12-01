@@ -35,12 +35,15 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Attacking
         if (Input.GetButtonDown("Fire1") && fightingStance)
         {
             attackHitbox.SetActive(true);
             attackTimer = 0;
         }
 
+
+        // Rotation
         if (attackTimer == attackTimerLimit)
         {
             if (speedX > 0) attackHitbox.transform.localPosition = new Vector2(1, 0);
@@ -48,7 +51,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if (Input.GetButtonDown("Fire3"))
+        // Changing stances
+        if (Input.GetButtonDown("Fire3")) // Lshift
         {
             fightingStance = !fightingStance;
             animator.SetTrigger("Draw Weapon");
@@ -61,6 +65,8 @@ public class PlayerMovement : MonoBehaviour
         }
         if (airStop) rb.linearVelocity = new Vector2(0, 0);
 
+
+        // Movement
         if (fightingStance)
         {
             speedX = Input.GetAxisRaw("Horizontal") * fightingMovementSpeed;
@@ -73,9 +79,10 @@ public class PlayerMovement : MonoBehaviour
             // speedY = Input.GetAxisRaw("Vertical") * movementSpeed;
             jump = Input.GetAxis("Jump") * jumpSpeed;
         }
-
         rb.linearVelocityX = speedX;
         
+
+        // Jumping
         if (Input.GetButtonDown("Jump") && canJump)
         {
             canJump = false;
@@ -97,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
                 leftFloor = false;
             }
         }
-
+        
         if (airStop)
         {
             airStopTimer++;
