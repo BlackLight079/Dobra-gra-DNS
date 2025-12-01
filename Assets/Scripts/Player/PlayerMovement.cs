@@ -14,11 +14,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float fightingJumpSpeed;
     float speedX, speedY, jump;
     bool canJump, fightingStance, leftFloor, airStop, canAirStop;
-    int jumpTimer, airStopTimer, attackTimer;
+    float jumpTimer, airStopTimer, attackTimer;
 
-    int jumpTimerLimit = 3;
-    int airStopTimerLimit = 12;
-    int attackTimerLimit = 10;
+    float jumpTimerLimit = 0.06f;
+    float airStopTimerLimit = 0.24f;
+    float attackTimerLimit = 0.20f;
 
     void Start()
     {
@@ -31,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
         jumpTimer = 0;
         airStopTimer = 0;
+        attackTimer = 0;
     }
 
     void Update()
@@ -39,13 +40,14 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Fire1") && fightingStance)
         {
             attackHitbox.SetActive(true);
-            attackTimer = 0;
+            attackTimer = Time.time + attackTimerLimit;
         }
 
 
         // Rotation
-        if (attackTimer == attackTimerLimit)
+        if (Time.time > attackTimer)
         {
+            attackHitbox.SetActive(false);
             if (speedX > 0) attackHitbox.transform.localPosition = new Vector2(1, 0);
             if (speedX < 0) attackHitbox.transform.localPosition = new Vector2(-1, 0);
         }
@@ -59,21 +61,22 @@ public class PlayerMovement : MonoBehaviour
             if (fightingStance && canAirStop)
             {
                 canAirStop = false;
-                airStop = true;
-                airStopTimer = 0;
+                airStopTimer = Time.time + airStopTimerLimit;
             }
         }
-        if (airStop) rb.linearVelocity = new Vector2(0, 0);
+
+        // Air stop
+        if (Time.time < airStopTimer) AirStop();
 
 
         // Movement
-        if (fightingStance)
+        if (fightingStance) // Drawn Weapon
         {
             speedX = Input.GetAxisRaw("Horizontal") * fightingMovementSpeed;
             // speedY = Input.GetAxisRaw("Vertical") * fightingMovementSpeed;
             jump = Input.GetAxis("Jump") * fightingJumpSpeed;
         }
-        else
+        else // normal
         {
             speedX = Input.GetAxisRaw("Horizontal") * movementSpeed;
             // speedY = Input.GetAxisRaw("Vertical") * movementSpeed;
@@ -88,35 +91,15 @@ public class PlayerMovement : MonoBehaviour
             canJump = false;
             rb.linearVelocityY = jump;
         }
-    }
 
-    private void FixedUpdate()
-    {
-        //if (leftFloor) jumpTimer++;
-        //if (jumpTimer > 5) canJump = false;
-
-        if (leftFloor)
+        // Jumping after leaving ground
+        if (leftFloor && Time.time > jumpTimer)
         {
-            jumpTimer++;
-            if (jumpTimer > jumpTimerLimit)
-            {
-                canJump = false;
-                leftFloor = false;
-            }
-        }
-        
-        if (airStop)
-        {
-            airStopTimer++;
-            if (airStopTimer > airStopTimerLimit) airStop = false;
-        }
-
-        if (attackTimer < attackTimerLimit)
-        {
-            attackTimer++;
-            if (attackTimer == attackTimerLimit) attackHitbox.SetActive(false);
+            canJump = false;
+            leftFloor = false;
         }
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -125,8 +108,6 @@ public class PlayerMovement : MonoBehaviour
             case "Floor":
                 canJump = true;
                 leftFloor = false;
-                jumpTimer = 0;
-                canAirStop = true;
                 break;
             case "ChangeSceneTrigger":
                 collision.GetComponent<ChangeSceneTrigger>().ChangeScene();
@@ -141,7 +122,6 @@ public class PlayerMovement : MonoBehaviour
             case "Floor":
                 canJump = true;
                 leftFloor = false;
-                jumpTimer = 0;
                 break;
         }
     }
@@ -151,8 +131,17 @@ public class PlayerMovement : MonoBehaviour
         switch (collision.tag)
         {
             case "Floor":
+                canAirStop = true;
                 leftFloor = true;
+                jumpTimer = Time.time + jumpTimerLimit;
                 break;
         }
+    }
+
+
+
+    void AirStop()
+    {
+        rb.linearVelocity = new Vector2(0, 0);
     }
 }
