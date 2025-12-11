@@ -13,26 +13,33 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float fightingMovementSpeed;
     [SerializeField] float fightingJumpSpeed;
     float speedX, speedY, jump;
-    bool canJump, fightingStance, leftFloor, airStop, canAirStop;
+    bool canJump, fightingStance, leftFloor, airStop, canAirStop, inWater;
     float jumpTimer, airStopTimer, attackTimer;
 
     float jumpTimerLimit = 0.06f;
     float airStopTimerLimit = 0.24f;
     float attackTimerLimit = 0.20f;
 
+    float defaultGravity, waterGravity;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
+        defaultGravity = rb.gravityScale;
+        waterGravity = 1f;
+
         fightingStance = false;
         leftFloor = false;
         canAirStop = true;
+        inWater = false;
 
         jumpTimer = 0;
         airStopTimer = 0;
         attackTimer = 0;
     }
+
 
     void Update()
     {
@@ -57,12 +64,17 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Fire3")) // Lshift
         {
             fightingStance = !fightingStance;
-            animator.SetTrigger("Draw Weapon");
+            if (fightingStance) animator.SetTrigger("Draw Weapon");
+            else animator.SetTrigger("Sheath Weapon");
+
             if (fightingStance && canAirStop)
             {
                 canAirStop = false;
                 airStopTimer = Time.time + airStopTimerLimit;
             }
+
+            if (fightingStance && inWater) rb.gravityScale = defaultGravity;
+            else if (!fightingStance && inWater) rb.gravityScale = waterGravity;
         }
 
         // Air stop
@@ -73,16 +85,20 @@ public class PlayerMovement : MonoBehaviour
         if (fightingStance) // Drawn Weapon
         {
             speedX = Input.GetAxisRaw("Horizontal") * fightingMovementSpeed;
-            // speedY = Input.GetAxisRaw("Vertical") * fightingMovementSpeed;
             jump = Input.GetAxis("Jump") * fightingJumpSpeed;
+        }
+        else if (inWater) // in water
+        {
+            speedX = Input.GetAxisRaw("Horizontal") * movementSpeed;
+            speedY = Input.GetAxisRaw("Vertical") * movementSpeed;
         }
         else // normal
         {
             speedX = Input.GetAxisRaw("Horizontal") * movementSpeed;
-            // speedY = Input.GetAxisRaw("Vertical") * movementSpeed;
             jump = Input.GetAxis("Jump") * jumpSpeed;
         }
         rb.linearVelocityX = speedX;
+        if (inWater && !fightingStance) rb.linearVelocityY = speedY;
         
 
         // Jumping
@@ -112,6 +128,9 @@ public class PlayerMovement : MonoBehaviour
             case "ChangeSceneTrigger":
                 collision.GetComponent<ChangeSceneTrigger>().ChangeScene();
                 break;
+            case "Water":
+                EnterWater();
+                break;
         }
     }
 
@@ -135,6 +154,9 @@ public class PlayerMovement : MonoBehaviour
                 leftFloor = true;
                 jumpTimer = Time.time + jumpTimerLimit;
                 break;
+            case "Water":
+                ExitWater();
+                break;
         }
     }
 
@@ -143,5 +165,20 @@ public class PlayerMovement : MonoBehaviour
     void AirStop()
     {
         rb.linearVelocity = new Vector2(0, 0);
+    }
+
+
+    void EnterWater()
+    {
+        inWater = true;
+        if (!fightingStance) rb.gravityScale = waterGravity;
+        Debug.Log("inWater");
+    }
+
+    void ExitWater()
+    {
+        inWater = false;
+        rb.gravityScale = defaultGravity;
+        Debug.Log("NOTinWater");
     }
 }
